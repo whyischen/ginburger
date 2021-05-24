@@ -1,4 +1,4 @@
-module github.com/whyischen/goburger
+module github.com/whyischen/ginburger
 
 go 1.15
 
