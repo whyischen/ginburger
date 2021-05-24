@@ -14,6 +14,8 @@ const (
 )
 
 type Response struct {
+	context *gin.Context
+
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
@@ -35,6 +37,7 @@ func BuildErrorResponse(c *gin.Context) *Response {
 		Code:    ErrorCode,
 		Message: ErrorMessage,
 		Data:    map[string]interface{}{},
+		context: c,
 	}
 
 	c.JSON(http.StatusOK, resp)
@@ -43,5 +46,6 @@ func BuildErrorResponse(c *gin.Context) *Response {
 
 func (receiver *Response) SetData(data interface{}) *Response {
 	receiver.Data = data
+	receiver.context.JSON(http.StatusOK, receiver)
 	return receiver
 }
