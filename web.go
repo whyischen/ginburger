@@ -8,44 +8,48 @@ import (
 const (
 	SuccessCode    = 0
 	SuccessMessage = "OK"
-
-	ErrorCode    = 10007
-	ErrorMessage = "error"
 )
 
-type Response struct {
-	context *gin.Context
+type E map[string]interface{}
 
+type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
-func BuildSuccessResponse(c *gin.Context) *Response {
+// default response
+// {"code":0, "message": "OK", "data": {}}
+func DefaultResp() *Response {
 	resp := &Response{
 		Code:    SuccessCode,
 		Message: SuccessMessage,
 		Data:    map[string]interface{}{},
 	}
-
-	c.JSON(http.StatusOK, resp)
 	return resp
 }
 
-func BuildErrorResponse(c *gin.Context) *Response {
-	resp := &Response{
-		Code:    ErrorCode,
-		Message: ErrorMessage,
+func BuildCodeMsgResp(c *gin.Context, code int, msg string) {
+	receiver := &Response{
+		Code:    code,
+		Message: msg,
 		Data:    map[string]interface{}{},
-		context: c,
 	}
 
-	c.JSON(http.StatusOK, resp)
-	return resp
+	receiver.Build(c)
 }
 
-func (receiver *Response) SetData(data interface{}) *Response {
-	receiver.Data = data
-	receiver.context.JSON(http.StatusOK, receiver)
-	return receiver
+func BuildCustomResp(c *gin.Context, code int, msg string, data interface{}) {
+	receiver := &Response{
+		Code:    code,
+		Message: msg,
+		Data:    data,
+	}
+
+	receiver.Build(c)
+}
+
+func (receiver *Response) Build(c *gin.Context) {
+	c.JSON(http.StatusOK, receiver)
+	c.Abort()
 }
