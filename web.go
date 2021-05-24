@@ -1,4 +1,4 @@
-package main
+package ginburger
 
 import (
 	"github.com/gin-gonic/gin"
